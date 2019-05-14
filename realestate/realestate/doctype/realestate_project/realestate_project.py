@@ -8,13 +8,13 @@ from frappe.model.document import Document
 
 class RealEstateProject(Document):
 	def validate(self):
-		real_estate_settings = frappe.get_doc("Real Estate Settings", "Real Estate Settings")
+		realestate_settings = frappe.get_doc("RealEstate Settings", "RealEstate Settings")
 		if not self.item:
 			self.create_item()
 		else:
 			item = frappe.get_doc("Item",self.item)
 			self.update_item_description(item)
-		# self.create_update_item_price(real_estate_settings)
+		# self.create_update_item_price(realestate_settings)
 	
 	def create_item(self):
 		if frappe.db.get_value("Item", self.assets_name, "name"):
@@ -29,10 +29,10 @@ class RealEstateProject(Document):
 			item.save()
 		self.item = item.name
 	
-	def create_update_item_price(self, real_estate_settings):
-		if frappe.db.get_values("Item Price",filters={"item_code":self.item, "price_list":real_estate_settings.price_list}, fieldname=["name"]):
+	def create_update_item_price(self, realestate_settings):
+		if frappe.db.get_values("Item Price",filters={"item_code":self.item, "price_list":realestate_settings.price_list}, fieldname=["name"]):
 			
-			item_price = frappe.get_doc("Item Price",frappe.db.get_values("Item Price",filters={"item_code":self.item, "price_list":real_estate_settings.price_list}, fieldname=["name"]))
+			item_price = frappe.get_doc("Item Price",frappe.db.get_values("Item Price",filters={"item_code":self.item, "price_list":realestate_settings.price_list}, fieldname=["name"]))
 			item_price.price_list_rate = self.price_list_rate
 			item_price.save()
 		else:
@@ -40,7 +40,7 @@ class RealEstateProject(Document):
 			item_price = frappe.get_doc({
 				"doctype": "Item Price",
 				"item_code": self.item,	
-				"price_list": real_estate_settings.price_list,
+				"price_list": realestate_settings.price_list,
 				"price_list_rate": self.price_list_rate
 			})
 			item_price.save()
