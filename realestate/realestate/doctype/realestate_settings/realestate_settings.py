@@ -34,4 +34,4 @@ def setup_custom_fields():
 	}
 
 	create_custom_fields(custom_fields)
-	frappe.msgprint(_("Custome Field update done."))
+	frappe.msgprint("Custome Field update done.")
