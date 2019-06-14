@@ -7,6 +7,10 @@ import frappe
 from frappe.model.document import Document
 
 class RealEstateProject(Document):
+
+	def validate(self):
+		self.update_outstanding()
+	
 	def after_insert(self):
 		if not self.project:
 			self.create_project(True)
@@ -33,3 +37,22 @@ class RealEstateProject(Document):
 	
 	def delete_project(self, project):
 		frappe.delete_doc("Project", project)
+
+	def update_outstanding(self):
+		for partner_row in self.partner:
+			partner_row.outstanding_amount = partner_row.invested_amount - self.get_paid_amount(partner_row)
+	
+	def get_paid_amount(self, partner_row):
+		paid_entry = frappe.get_all('RealEstate Payment Entry', 
+			filters={
+				'docstatus': 1, 
+				'payment_type': 'Receive',
+				'realestate_partner': partner_row.partner, 
+				'realestate_project': self.name
+			}, 
+			fields=['paid_amount']
+		)
+		paid_amount = 0
+		for entry in paid_entry:
+			paid_amount += float(entry['paid_amount'])
+		return paid_amount

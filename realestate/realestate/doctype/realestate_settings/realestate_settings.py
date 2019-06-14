@@ -9,7 +9,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 class RealEstateSettings(Document):
 	def validate(self):
-		if self.enable_realestate == 1:
+		if self.enable_real_estate == 1:
 			# setup_custom_fields()
 			pass
 
