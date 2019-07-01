@@ -30,6 +30,15 @@ def setup_custom_fields():
 				options='RealEstate Project',
 				insert_after='realestate_project_details',
 			),		
+		],
+		"Purchase Invoice": [
+			dict(
+				fieldname='project',
+				label='Project',
+				fieldtype='Link',
+				options='Project',
+				insert_after='supplier_name'
+			),
 		]
 	}
 

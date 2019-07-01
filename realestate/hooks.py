@@ -120,3 +120,6 @@ app_license = "MIT"
 # 	"frappe.desk.doctype.event.event.get_events": "realestate.event.get_events"
 # }
 
+doctype_js = {
+	"Purchase Invoice" : "customizations/purchase_invoice/purchase_invoice.js",
+}
