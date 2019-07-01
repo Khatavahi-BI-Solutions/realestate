@@ -14,8 +14,6 @@ frappe.ui.form.on('RealEstate Project', {
 				//perform desired action such as routing to new form or fetching etc.
 			}, __("Make"));
 			frm.add_custom_button(__('Open Project'), function() {
-				console.log(frm);
-				debugger;
 				frappe.set_route("Form", "Project",frm.doc.project)
 			}, __("Project") );
 			frm.add_custom_button(__('Remove Project'), function() {
