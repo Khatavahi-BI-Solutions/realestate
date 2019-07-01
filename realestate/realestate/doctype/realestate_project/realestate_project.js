@@ -6,6 +6,18 @@ frappe.ui.form.on('RealEstate Project', {
 		frm.add_fetch("partner", "account_head", "account_head");
 		if(!frm.doc.__islocal && frm.doc.project){
 			var project = frm.doc.project;
+
+			frm.add_custom_button(__("Sales Invoice"), function(){
+				//perform desired action such as routing to new form or fetching etc.
+			}, __("Make"));
+			frm.add_custom_button(__("Purchase Invoice"), function(){
+				//perform desired action such as routing to new form or fetching etc.
+			}, __("Make"));
+			frm.add_custom_button(__('Open Project'), function() {
+				console.log(frm);
+				debugger;
+				frappe.set_route("Form", "Project",frm.doc.project)
+			}, __("Project") );
 			frm.add_custom_button(__('Remove Project'), function() {
 				frappe.call({
 					doc: frm.doc,
@@ -27,7 +39,7 @@ frappe.ui.form.on('RealEstate Project', {
 					
 					}
 				})
-			}).addClass("btn-primary");
+			}, __("Project") );
 		}
 		if(!frm.doc.__islocal && !frm.doc.project){
 			frm.add_custom_button(__('Create Project'), function() {
@@ -39,12 +51,12 @@ frappe.ui.form.on('RealEstate Project', {
 						location.reload();
 					}
 				})
-			}).addClass("btn-primary");
+			}, __("Project"));
 		}
 
 		frm.add_custom_button(__('Calculate Partnership'), function() {
 			frm.events.calculate_partnership(frm)
-		}).addClass("btn-primary");
+		}, __("Project"));
 	},
 	budget_amount: function(frm) {
 		// frm.events.calculate_partnership(frm)
