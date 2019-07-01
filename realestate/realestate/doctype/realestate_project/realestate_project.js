@@ -16,31 +16,30 @@ frappe.ui.form.on('RealEstate Project', {
 			frm.add_custom_button(__('Open Project'), function() {
 				frappe.set_route("Form", "Project",frm.doc.project)
 			}, __("Project") );
-
-			if(frappe.user.has_role("Administrator")){
-				frm.add_custom_button(__('Remove Project'), function() {
-					frappe.call({
-						doc: frm.doc,
-						method:'before_remove',
-						callback: function(r) {
+			// if(frappe.user.has_role("Administrator")){
+			// 	frm.add_custom_button(__('Remove Project'), function() {
+			// 		frappe.call({
+			// 			doc: frm.doc,
+			// 			method:'before_remove',
+			// 			callback: function(r) {
 							
-							frappe.call({
-								doc: frm.doc,
-								method:'delete_project',
-								args: {
-									"project":project
-								},
-								callback: function(r) {
-									show_alert('Project Deleted.')
-									location.reload();
-								}
-							})
-							show_alert('Project Unlinked.')
+			// 				frappe.call({
+			// 					doc: frm.doc,
+			// 					method:'delete_project',
+			// 					args: {
+			// 						"project":project
+			// 					},
+			// 					callback: function(r) {
+			// 						show_alert('Project Deleted.')
+			// 						location.reload();
+			// 					}
+			// 				})
+			// 				show_alert('Project Unlinked.')
 						
-						}
-					})
-				}, __("Project") );
-			}
+			// 			}
+			// 		})
+			// 	}, __("Project") );
+			// }
 		}
 		if(!frm.doc.__islocal && !frm.doc.project){
 			frm.add_custom_button(__('Create Project'), function() {
