@@ -11,14 +11,6 @@ class RealEstateProject(Document):
 
 	def validate(self):
 		self.update_outstanding()
-
-	def on_update(self):
-		self.calculate_capital()
-		self.update_costing()
-		self.update_account_receivable_payable()
-		
-	
-	def on_load(self):
 		self.calculate_capital()
 		self.update_costing()
 		self.update_account_receivable_payable()
