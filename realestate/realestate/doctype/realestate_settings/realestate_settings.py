@@ -33,8 +33,8 @@ def setup_custom_fields():
 		],
 		"Purchase Invoice": [
 			dict(
-				fieldname='project',
-				label='Project',
+				fieldname='project_reference',
+				label='Project Reference',
 				fieldtype='Link',
 				options='Project',
 				insert_after='supplier_name'
