@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
 
 class RealEstateProject(Document):
 
@@ -56,3 +57,29 @@ class RealEstateProject(Document):
 		for entry in paid_entry:
 			paid_amount += float(entry['paid_amount'])
 		return paid_amount
+
+@frappe.whitelist()
+def make_sales_invoice(source_name, target_doc=None):
+
+	doclist = get_mapped_doc("RealEstate Project", source_name,
+		{"RealEstate Project": {
+			"doctype": "Sales Invoice",
+			"field_map": {
+				"project": "project"
+			}
+		}}, target_doc)
+
+	return doclist
+
+@frappe.whitelist()
+def make_purchase_invoice(source_name, target_doc=None):
+
+	doclist = get_mapped_doc("RealEstate Project", source_name,
+		{"RealEstate Project": {
+			"doctype": "Purchase Invoice",
+			"field_map": {
+				"project": "project"
+			}
+		}}, target_doc)
+
+	return doclist
