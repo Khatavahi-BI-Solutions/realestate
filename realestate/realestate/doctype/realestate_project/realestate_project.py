@@ -126,7 +126,7 @@ def make_purchase_invoice(source_name, target_doc=None):
 		{"RealEstate Project": {
 			"doctype": "Purchase Invoice",
 			"field_map": {
-				"project": "project"
+				"project": "project_reference"
 			}
 		}}, target_doc)
 
