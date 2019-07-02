@@ -11,7 +11,63 @@ class RealEstateProject(Document):
 
 	def validate(self):
 		self.update_outstanding()
+
+	def on_update(self):
+		self.calculate_capital()
+		self.update_costing()
+		self.update_account_receivable_payable()
+		
 	
+	def on_load(self):
+		self.calculate_capital()
+		self.update_costing()
+		self.update_account_receivable_payable()
+	
+	def update_costing(self):
+		total_sales_amount = frappe.db.sql("""select sum(base_net_total)
+			from `tabSales Invoice` where project = %s and docstatus=1""", self.project)
+
+		self.total_revenue = total_sales_amount and total_sales_amount[0][0] or 0
+
+		total_purchase_cost = frappe.db.sql("""select sum(base_net_amount)
+			from `tabPurchase Invoice Item` where project = %s and docstatus=1""", self.project)
+
+		self.total_expenses = total_purchase_cost and total_purchase_cost[0][0] or 0
+
+		self.profit = self.total_revenue - self.total_expenses
+	
+	def update_account_receivable_payable(self):
+		total_receivable = frappe.db.sql("""select sum(outstanding_amount)
+			from `tabSales Invoice` where project = %s and docstatus=1""", self.project)
+
+		self.accounts_receivable = total_receivable and total_receivable[0][0] or 0
+
+		total_payable = frappe.db.sql("""select sum(outstanding_amount)
+			from `tabPurchase Invoice` where project = %s and docstatus=1""", self.project)
+
+		self.accounts_payable = total_payable and total_payable[0][0] or 0
+
+		self.receivable__payable = self.capital + self.accounts_receivable - self.accounts_payable
+	
+	def calculate_capital(self):
+		capital_payment = frappe.get_all(
+			'RealEstate Payment Entry', 
+			filters={
+				'realestate_project': self.name, 
+				'docstatus':'1'
+			},
+			fields=['payment_type', 'paid_amount']
+		
+		)
+		capital = 0
+		for row in capital_payment:
+			if row['payment_type'] == 'Receive':
+				capital += row['paid_amount']
+			if row['payment_type'] == 'Pay':
+				capital -= row['paid_amount']
+
+		self.capital = capital
+
 	def after_insert(self):
 		if not self.project:
 			self.create_project(True)
