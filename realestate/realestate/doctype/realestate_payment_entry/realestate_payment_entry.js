@@ -14,21 +14,31 @@ frappe.ui.form.on('RealEstate Payment Entry', {
 	mode_of_payment: function(frm) {
 		frm.events.set_accounts(frm)
 	},
+	company: function(frm) {
+		frm.events.set_accounts(frm)
+	},
+	project: function(frm) {
+		frm.events.set_accounts(frm)
+	},
 	set_accounts: function(frm) {
-		frappe.call({
-			method: "realestate.realestate.doctype.realestate_payment_entry.realestate_payment_entry.get_bank_cash_account",
-			args: {
-				"realestate_partner": frm.doc.realestate_partner,
-				"payment_type": frm.doc.payment_type,
-				"mode_of_payment": frm.doc.mode_of_payment,
-				"company": frm.doc.company,
-				"project": frm.doc.realestate_project
-			},
-			callback: function(r) {
-				if(r.message) {
+		if( frm.doc.realestate_partner && frm.doc.payment_type && frm.doc.mode_of_payment && frm.doc.company && frm.doc.realestate_project ){
+			frappe.call({
+				method: "realestate.realestate.doctype.realestate_payment_entry.realestate_payment_entry.get_bank_cash_account",
+				args: {
+					"realestate_partner": frm.doc.realestate_partner,
+					"payment_type": frm.doc.payment_type,
+					"mode_of_payment": frm.doc.mode_of_payment,
+					"company": frm.doc.company,
+					"project": frm.doc.realestate_project
+				},
+				callback: function(r) {
+					if(r.message) {
+						frm.set_value("account_paid_from", r.message.from);
+						frm.set_value("account_paid_to", r.message.to);
+					}
 				}
-			}
-		});
+			});
+		}
 	},
 	setup: function(frm) {
 		frm.set_query("account_paid_from", function() {

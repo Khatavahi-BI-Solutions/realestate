@@ -18,7 +18,38 @@ class RealEstatePaymentEntry(Document):
 		self.cancel_journal_voucher()
 	
 	def make_journal_voucher(self):
-		pass
+		doc = frappe.get_doc({
+			"doctype": "Journal Entry",
+			"voucher_type": "Journal Entry",
+		})
+		if self.payment_type == "Pay":
+			#from
+			doc.append("accounts", {
+				"account":self.account_paid_from,
+				"credit_in_account_currency": self.paid_amount
+			})
+			#to
+			doc.append("accounts", {
+				"account": self.account_paid_to,
+				"party": self.shareholder,
+				"debit_in_account_currency":self.paid_amount
+			})
+		else:
+			#to
+			doc.append("accounts", {
+				"account":self.account_paid_to,
+				"debit_in_account_currency": self.paid_amount
+			})
+			#from
+			doc.append("accounts", {
+				"account": self.account_paid_from,
+				"party": self.shareholder,
+				"credit_in_account_currency":self.paid_amount
+			})
+		for row in doc.accounts:
+				print(row.account)
+		doc.insert()
+		doc.submit()
 	
 	def cancel_journal_voucher(self):
 		pass
@@ -37,6 +68,19 @@ def get_bank_cash_account(realestate_partner = None, payment_type = None, mode_o
 		
 		account['to'] = frappe.get_value("RealEstate Project", project, "account_receivable")
 		if not account['to']:
-			account['to'] = frappe.get_value("RealEstate Settings", "RealEstate Settings", "account_payable")
+			account['to'] = frappe.get_value("Mode of Payment Account", filters = { "parent":mode_of_payment, "company":company}, fieldname = "default_account")
+		if not account['to']:
+			account['to'] = frappe.get_value("RealEstate Settings", "RealEstate Settings", "account_receivable")
 	else:
-		pass
+		#pay
+		account['to'] = frappe.get_value("RealEstate Partner", realestate_partner, "account")
+		if not account['to']:
+			account['to'] = frappe.get_value("RealEstate Settings", "RealEstate Settings", "account_payable")
+		
+		account['from'] = frappe.get_value("RealEstate Project", project, "account_receivable")
+		if not account['from']:
+			account['from'] = frappe.get_value("Mode of Payment Account", filters = { "parent":mode_of_payment, "company":company}, fieldname = "default_account")
+		if not account['from']:
+			account['from'] = frappe.get_value("RealEstate Settings", "RealEstate Settings", "account_receivable")
+	
+	return account
