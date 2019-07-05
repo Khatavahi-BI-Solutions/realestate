@@ -66,6 +66,17 @@ frappe.ui.form.on('RealEstate Project', {
 			frm.events.calculate_partnership(frm)
 		}, __("Project"));
 	},
+	setup: function(frm) {
+		frm.set_query("account_receivable", function() {
+			return {
+				filters: {
+					"account_type": ["in", ["Bank", "Cash"]],
+					"is_group": 0,
+					"company": frm.doc.company
+				}
+			}
+		});
+	},
 	budget_amount: function(frm) {
 		// frm.events.calculate_partnership(frm)
 	},
