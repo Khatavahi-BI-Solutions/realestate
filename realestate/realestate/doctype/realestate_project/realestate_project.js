@@ -3,7 +3,6 @@
 
 frappe.ui.form.on('RealEstate Project', {
 	refresh: function(frm) {
-		frm.add_fetch("partner", "account_head", "account_head");
 		if(!frm.doc.__islocal && frm.doc.project){
 			var project = frm.doc.project;
 

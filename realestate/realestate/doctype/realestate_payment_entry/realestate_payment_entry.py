@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.utils import today
 
 class RealEstatePaymentEntry(Document):
 	def on_submit(self):
@@ -21,6 +22,8 @@ class RealEstatePaymentEntry(Document):
 		doc = frappe.get_doc({
 			"doctype": "Journal Entry",
 			"voucher_type": "Journal Entry",
+			"posting_date": today(),
+			"realestate_payment_entry": self.name
 		})
 		if self.payment_type == "Pay":
 			#from
@@ -31,6 +34,7 @@ class RealEstatePaymentEntry(Document):
 			#to
 			doc.append("accounts", {
 				"account": self.account_paid_to,
+				"party_type": "Shareholder",
 				"party": self.shareholder,
 				"debit_in_account_currency":self.paid_amount
 			})
@@ -43,16 +47,18 @@ class RealEstatePaymentEntry(Document):
 			#from
 			doc.append("accounts", {
 				"account": self.account_paid_from,
+				"party_type": "Shareholder",
 				"party": self.shareholder,
 				"credit_in_account_currency":self.paid_amount
 			})
-		for row in doc.accounts:
-				print(row.account)
 		doc.insert()
 		doc.submit()
 	
 	def cancel_journal_voucher(self):
-		pass
+		jv = frappe.get_list("Journal Entry",{"realestate_payment_entry":self.name,"docstatus":1})
+		for jv_entry in jv:
+			jv_doc = frappe.get_doc("Journal Entry", jv_entry.name)
+			jv_doc.cancel()
 
 @frappe.whitelist()
 def get_bank_cash_account(realestate_partner = None, payment_type = None, mode_of_payment = None, company = None, project = None):

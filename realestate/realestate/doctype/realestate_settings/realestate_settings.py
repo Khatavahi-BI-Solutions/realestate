@@ -39,6 +39,15 @@ def setup_custom_fields():
 				options='Project',
 				insert_after='supplier_name'
 			),
+		],
+		"Journal Entry": [
+			dict(
+				fieldname='realestate_payment_entry',
+				label='RealEstate Payment Entry',
+				fieldtype='Link',
+				options='RealEstate Payment Entry',
+				insert_after='reference'
+			),
 		]
 	}
 
