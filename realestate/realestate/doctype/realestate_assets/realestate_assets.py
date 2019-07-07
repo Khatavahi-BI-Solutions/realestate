@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from frappe.model.mapper import get_mapped_doc
 
 class RealEstateAssets(Document):
 	def validate(self):
@@ -48,3 +49,18 @@ class RealEstateAssets(Document):
 	def update_item_description(self, item):
 		item.description = self.assets_details
 		item.save()
+
+@frappe.whitelist()
+def make_sales_invoice(source_name, target_doc=None):
+
+	doclist = get_mapped_doc("RealEstate Assets", source_name,
+		{
+			"RealEstate Assets": {
+				"doctype": "Sales Invoice",
+				"field_map": {
+					"project": "project"
+				}
+			}
+		}, target_doc)
+
+	return doclist

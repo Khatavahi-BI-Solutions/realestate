@@ -131,3 +131,16 @@ def make_purchase_invoice(source_name, target_doc=None):
 		}}, target_doc)
 
 	return doclist
+
+@frappe.whitelist()
+def make_payment_entry(source_name, target_doc = None):
+
+	doclist = get_mapped_doc("RealEstate Project", source_name,
+		{"RealEstate Project": {
+			"doctype": "RealEstate Payment Entry",
+			"field_map": {
+				"name": "realestate_project"
+			}
+		}}, target_doc)
+
+	return doclist

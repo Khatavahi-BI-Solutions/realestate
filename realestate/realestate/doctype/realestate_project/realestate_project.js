@@ -20,6 +20,13 @@ frappe.ui.form.on('RealEstate Project', {
 					frm: cur_frm
 				})
 			}, __("Make"));
+			frm.add_custom_button(__("RealEstate Payment Entry"), function(){
+				//perform desired action such as routing to new form or fetching etc.
+				frappe.model.open_mapped_doc({
+					method: "realestate.realestate.doctype.realestate_project.realestate_project.make_payment_entry",
+					frm: cur_frm
+				})
+			}, __("Make"));
 			frm.add_custom_button(__('Open Project'), function() {
 				frappe.set_route("Form", "Project",frm.doc.project)
 			}, __("Project") );
