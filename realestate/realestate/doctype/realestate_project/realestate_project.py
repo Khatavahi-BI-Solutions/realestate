@@ -14,7 +14,16 @@ class RealEstateProject(Document):
 		self.calculate_capital()
 		self.update_costing()
 		self.update_account_receivable_payable()
+		self.update_assets()
 	
+	def update_assets(self):
+		for asset in self.realestate_assets:
+			assets = frappe.get_doc("RealEstate Assets", asset.asset)
+			asset.status = assets.asset_status
+			asset.rate = assets.rate
+			asset.amount = assets.total_amount
+			asset.outstanding = assets.total_outstanding
+
 	def update_costing(self):
 		total_sales_amount = frappe.db.sql("""select sum(base_net_total)
 			from `tabSales Invoice` where project = %s and docstatus=1""", self.project)

@@ -16,7 +16,27 @@ class RealEstateAssets(Document):
 			item = frappe.get_doc("Item",self.item)
 			self.update_item_description(item)
 		# self.create_update_item_price(realestate_settings)
+		self.update_invoice_details()
+		self.total_calculation()
 	
+	def on_update(self):
+		self.update_realestate_project()
+	
+	def update_realestate_project(self):
+		project = frappe.get_all('RealEstate Assets Table', filters={'asset': self.name }, fields=['parent'])
+		for pro in project:
+			project = frappe.get_doc("RealEstate Project", pro.parent)
+			project.save()
+	
+	def total_calculation(self):
+		total_amount, total_outstanding = 0,0
+		for row in self.sales_invoice:
+			total_amount += row.amount
+			total_outstanding += row.outstanding
+		
+		self.total_amount = total_amount
+		self.total_outstanding = total_outstanding
+
 	def create_item(self):
 		if frappe.db.get_value("Item", self.assets_name, "name"):
 			item = frappe.get_doc("Item",self.assets_name)
@@ -49,6 +69,22 @@ class RealEstateAssets(Document):
 	def update_item_description(self, item):
 		item.description = self.assets_details
 		item.save()
+	
+	def update_invoice_details(self):
+		sales_invoice = frappe.get_all('Sales Invoice Item', filters={'docstatus': 1, 'item_code': self.item }, fields=['parent'])
+		self.sales_invoice = {}
+		invoice_exist = False
+		for sin in sales_invoice:
+			invoice_exist = True
+			self.append('sales_invoice', {
+				'sales_invoice': sin.parent,
+				'amount': frappe.get_value("Sales Invoice", sin.parent, 'grand_total'),
+				'outstanding': frappe.get_value("Sales Invoice", sin.parent, 'outstanding_amount')
+			})
+		if invoice_exist:
+			self.asset_status = "Sold"
+		else:
+			self.asset_status = "Available"
 
 @frappe.whitelist()
 def make_sales_invoice(source_name, target_doc=None):
