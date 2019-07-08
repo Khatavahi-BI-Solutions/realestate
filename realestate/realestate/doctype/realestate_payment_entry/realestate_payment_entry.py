@@ -79,7 +79,7 @@ def get_bank_cash_account(realestate_partner = None, payment_type = None, mode_o
 			account['to'] = frappe.get_value("RealEstate Settings", "RealEstate Settings", "account_receivable")
 	else:
 		#pay
-		account['to'] = frappe.get_value("RealEstate Partner", realestate_partner, "account")
+		account['to'] = frappe.get_value("RealEstate Partner", realestate_partner, "drawn_account")
 		if not account['to']:
 			account['to'] = frappe.get_value("RealEstate Settings", "RealEstate Settings", "account_payable")
 		

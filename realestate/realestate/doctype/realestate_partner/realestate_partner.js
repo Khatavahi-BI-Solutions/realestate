@@ -7,12 +7,20 @@ frappe.ui.form.on('RealEstate Partner', {
 	},
 	setup: function(frm) {
 		frm.set_query("account", function() {
-
 			return {
 				filters: {
 					"account_type": ["in", "Payable"],
 					"is_group": 0,
-					"company": frm.doc.company
+					// "company": frm.doc.company
+				}
+			}
+		});
+		frm.set_query("drawn_account", function() {
+			return {
+				filters: {
+					"account_type": ["in", "Payable"],
+					"is_group": 0,
+					// "company": frm.doc.company
 				}
 			}
 		});
