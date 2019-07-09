@@ -10,12 +10,13 @@ from frappe.model.mapper import get_mapped_doc
 class RealEstateAssets(Document):
 	def validate(self):
 		realestate_settings = frappe.get_doc("RealEstate Settings", "RealEstate Settings")
+		self.price_list = realestate_settings.price_list
 		if not self.item:
 			self.create_item()
 		else:
 			item = frappe.get_doc("Item",self.item)
 			self.update_item_description(item)
-		# self.create_update_item_price(realestate_settings)
+		self.create_update_item_price()
 		self.update_invoice_details()
 		self.total_calculation()
 	
@@ -50,19 +51,19 @@ class RealEstateAssets(Document):
 			item.save()
 		self.item = item.name
 	
-	def create_update_item_price(self, realestate_settings):
-		if frappe.db.get_values("Item Price",filters={"item_code":self.item, "price_list":realestate_settings.price_list}, fieldname=["name"]):
-			
-			item_price = frappe.get_doc("Item Price",frappe.db.get_values("Item Price",filters={"item_code":self.item, "price_list":realestate_settings.price_list}, fieldname=["name"]))
-			item_price.price_list_rate = self.price_list_rate
+	def create_update_item_price(self):
+		item_price = frappe.db.get_value("Item Price",filters={"item_code":self.item, "price_list": self.price_list}, fieldname=["name"])
+		if item_price:
+			item_price = frappe.get_doc("Item Price", item_price)
+			item_price.price_list_rate = self.rate
 			item_price.save()
 		else:
 			
 			item_price = frappe.get_doc({
 				"doctype": "Item Price",
 				"item_code": self.item,	
-				"price_list": realestate_settings.price_list,
-				"price_list_rate": self.price_list_rate
+				"price_list": self.price_list,
+				"price_list_rate": self.rate
 			})
 			item_price.save()
 
