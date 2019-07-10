@@ -10,12 +10,22 @@ from frappe.model.mapper import get_mapped_doc
 class RealEstateProject(Document):
 
 	def validate(self):
+		pass
+		
+	def on_update(self):
 		self.update_outstanding()
 		self.calculate_capital()
 		self.update_costing()
 		self.update_account_receivable_payable()
 		self.update_assets()
 	
+	def onload(self):
+		self.update_outstanding()
+		self.calculate_capital()
+		self.update_costing()
+		self.update_account_receivable_payable()
+		self.update_assets()
+
 	def update_assets(self):
 		for asset in self.realestate_assets:
 			assets = frappe.get_doc("RealEstate Assets", asset.asset)
@@ -51,7 +61,7 @@ class RealEstateProject(Document):
 		
 		self.accounts_payable = total_payable and total_payable[0][0] or 0
 
-		self.receivable__payable = self.capital + self.accounts_receivable - self.accounts_payable
+		self.current_balance = self.capital + self.total_revenue - self.accounts_receivable - self.total_expenses + self.accounts_payable
 	
 	def calculate_capital(self):
 		capital_payment = frappe.get_all(
