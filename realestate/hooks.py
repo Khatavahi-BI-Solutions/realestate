@@ -92,10 +92,10 @@ doc_events = {
 		"on_submit": "realestate.utils.sales_invoice_submit",
 		"on_cancel": "realestate.utils.sales_invoice_cancel",
 	},
-	# "Sales Order": {
-	# 	"on_submit": "realestate.utils.sales_order_submit",
-	# 	"on_cancel": "realestate.utils.sales_order_cancel",
-	# },
+	"Payment Entry": {
+		"on_submit": "realestate.utils.payment_entry_submit",
+		"on_cancel": "realestate.utils.payment_entry_cancel",
+	},
 }
 
 # Scheduled Tasks

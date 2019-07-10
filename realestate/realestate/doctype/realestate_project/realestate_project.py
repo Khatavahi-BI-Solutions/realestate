@@ -114,18 +114,22 @@ class RealEstateProject(Document):
 			partner_row.outstanding_amount = partner_row.invested_amount - self.get_paid_amount(partner_row)
 	
 	def get_paid_amount(self, partner_row):
-		paid_entry = frappe.get_all('RealEstate Payment Entry', 
+		paid_entry = frappe.get_all(
+			'RealEstate Payment Entry', 
 			filters={
-				'docstatus': 1, 
-				'payment_type': 'Receive',
-				'realestate_partner': partner_row.partner, 
-				'realestate_project': self.name
-			}, 
-			fields=['paid_amount']
+				'realestate_project': self.name,
+				'realestate_partner': partner_row.partner,
+				'docstatus':'1'
+			},
+			fields=['payment_type', 'paid_amount']
+		
 		)
 		paid_amount = 0
-		for entry in paid_entry:
-			paid_amount += float(entry['paid_amount'])
+		for row in paid_entry:
+			if row['payment_type'] == 'Receive':
+				paid_amount += row['paid_amount']
+			if row['payment_type'] == 'Pay':
+				paid_amount -= row['paid_amount']
 		return paid_amount
 
 @frappe.whitelist()
