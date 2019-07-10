@@ -43,9 +43,12 @@ class RealEstateProject(Document):
 
 		self.accounts_receivable = total_receivable and total_receivable[0][0] or 0
 
-		total_payable = frappe.db.sql("""select sum(outstanding_amount)
-			from `tabPurchase Invoice` where project_reference = %s and docstatus=1""", self.project)
-
+		total_payable = frappe.db.sql("""
+			select sum(outstanding_amount) from (select pi.outstanding_amount as outstanding_amount
+				from `tabPurchase Invoice` as pi inner join
+				`tabPurchase Invoice Item` as pit on pi.name = pit.parent
+				where pit.project = %s and pi.docstatus=1 group by pi.name) pi""", self.project)
+		
 		self.accounts_payable = total_payable and total_payable[0][0] or 0
 
 		self.receivable__payable = self.capital + self.accounts_receivable - self.accounts_payable
