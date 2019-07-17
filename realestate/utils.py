@@ -1,6 +1,7 @@
 import frappe
 
 def sales_invoice_submit(doc, method = None):
+	return
 	assets = []
 	for item in doc.items:
 		asset = frappe.get_doc("RealEstate Assets",{"item": item.item_code})
@@ -9,6 +10,7 @@ def sales_invoice_submit(doc, method = None):
 			assets.append(asset)
 
 def sales_invoice_cancel(doc, method = None):
+	return
 	assets = []
 	for item in doc.items:
 		asset = frappe.get_doc("RealEstate Assets",{"item": item.item_code})
@@ -17,6 +19,7 @@ def sales_invoice_cancel(doc, method = None):
 			assets.append(asset)
 
 def purchase_invoice_submit(doc, method = None):
+	return
 	assets = []
 	for item in doc.items:
 		asset = frappe.get_doc("RealEstate Assets",{"item": item.item_code})
@@ -25,6 +28,7 @@ def purchase_invoice_submit(doc, method = None):
 			assets.append(asset)
 
 def purchase_invoice_cancel(doc, method = None):
+	return
 	assets = []
 	for item in doc.items:
 		asset = frappe.get_doc("RealEstate Assets",{"item": item.item_code})
@@ -33,6 +37,7 @@ def purchase_invoice_cancel(doc, method = None):
 			assets.append(asset)
 
 def payment_entry_submit(doc, method):
+	return
 	assets = []
 	for item in doc.references:
 		asset = frappe.get_doc("RealEstate Assets",{"item": item.item_code})
@@ -41,6 +46,7 @@ def payment_entry_submit(doc, method):
 			assets.append(asset)
 
 def payment_entry_cancel(doc, method):
+	return
 	assets = []
 	for item in doc.references:
 		asset = frappe.get_doc("RealEstate Assets",{"item": item.item_code})

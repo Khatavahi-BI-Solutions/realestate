@@ -61,7 +61,11 @@ class RealEstateProject(Document):
 		
 		self.accounts_payable = total_payable and total_payable[0][0] or 0
 
-		self.current_balance = self.capital + self.total_revenue - self.accounts_receivable - self.total_expenses + self.accounts_payable
+		self.current_balance = self.capital + \
+								self.total_revenue - \
+								self.accounts_receivable - \
+								self.total_expenses + \
+								self.accounts_payable
 	
 	def calculate_capital(self):
 		capital_payment = frappe.get_all(
